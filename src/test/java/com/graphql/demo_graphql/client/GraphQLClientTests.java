@@ -2,7 +2,6 @@ package com.graphql.demo_graphql.client;
 
 import com.graphql.demo_graphql.model.Idea;
 import jakarta.annotation.PostConstruct;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,5 +33,8 @@ public class GraphQLClientTests {
         assertThat(ideas).isNotNull();
         assertThat(ideas.size()).isEqualTo(1);
         assertThat(ideas.getFirst().getTitle()).isEqualTo("title data");
+        assertThat(ideas.getFirst().getAuthor().getId()).isEqualTo(2);
+        assertThat(ideas.getFirst().getAuthor().getName()).isEqualTo("test_injected");
+        assertThat(ideas.getFirst().getAuthor().getEmail()).isEqualTo("test_injected@mail.me");
     }
 }

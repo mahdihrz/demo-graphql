@@ -42,17 +42,55 @@ type Idea {
     id: ID!
     title: String!
     description: String
+    author: Author!
+}
+
+type Author {
+    id: ID!
+    name: String!
+    email: String!
+    ideas: [Idea]
 }
 
 type Query {
     getAllIdeas: [Idea]
     getIdeaById(id: ID!): Idea
+    getAuthors: [Author]
+    getAuthorById(id: ID!): Author
 }
 
 type Mutation {
-    createIdea(title: String!, description: String): Idea
-    updateIdea(id: ID!, title: String, description: String): Idea
+    createIdea(title: String!, description: String, authorId: ID!): Idea
+    createAuthor(name: String!, email: String!): Author
+    updateIdea(id: ID!, title: String, description: String, authorId: ID): Idea
     deleteIdeaById(id: ID!): String
 }
 ```
 
+- GraphQL Schema : 
+### Example of API request to create Author : 
+```
+curl --location 'localhost:8080/graphql' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "query": "mutation {createAuthor (name: \"testName\", email:\"test@mail.me\"){ id name email } }"
+}'
+```
+
+### Example of API request to get All Authors (with id, name, email) :
+```
+curl --location 'localhost:8080/graphql' \
+--header 'Content-Type: application/json' \
+--data '{
+    "query": "query {getAuthors {id name email}}"
+}'
+```
+
+### Example of API request to create a new Idea :
+```
+curl --location 'localhost:8080/graphql' \
+--header 'Content-Type: application/json' \
+--data '{
+    "query": "mutation {createIdea (title: \"mahdi\", description:\"awesome idea\", authorId:1) { id description author {name}} }"
+}'
+```

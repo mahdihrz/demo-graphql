@@ -2,15 +2,26 @@ type Idea {
     id: ID!
     title: String!
     description: String
+    author: Author!
+}
+
+type Author {
+    id: ID!
+    name: String!
+    email: String!
+    ideas: [Idea]
 }
 
 type Query {
     getAllIdeas: [Idea]
     getIdeaById(id: ID!): Idea
+    getAuthors: [Author]
+    getAuthorById(id: ID!): Author
 }
 
 type Mutation {
-    createIdea(title: String!, description: String): Idea
-    updateIdea(id: ID!, title: String, description: String): Idea
+    createIdea(title: String!, description: String, authorId: ID!): Idea
+    createAuthor(name: String!, email: String!): Author
+    updateIdea(id: ID!, title: String, description: String, authorId: ID): Idea
     deleteIdeaById(id: ID!): String
 }

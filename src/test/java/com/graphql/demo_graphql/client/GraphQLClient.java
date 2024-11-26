@@ -36,6 +36,11 @@ public class GraphQLClient {
                 getAllIdeas {
                     title
                     description
+                    author {
+                        id
+                        name
+                        email
+                    }
                 }
             }
         """;
