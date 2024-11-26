@@ -1,0 +1,16 @@
+type Idea {
+    id: ID!
+    title: String!
+    description: String
+}
+
+type Query {
+    getAllIdeas: [Idea]
+    getIdeaById(id: ID!): Idea
+}
+
+type Mutation {
+    createIdea(title: String!, description: String): Idea
+    updateIdea(id: ID!, title: String, description: String): Idea
+    deleteIdeaById(id: ID!): String
+}

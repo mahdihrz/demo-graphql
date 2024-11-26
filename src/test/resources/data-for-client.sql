@@ -1,0 +1,1 @@
+INSERT INTO idea (id, title, description) VALUES (1, 'title data', 'description data')
