@@ -10,6 +10,12 @@ type Author {
     name: String!
     email: String!
     ideas: [Idea]
+    roles: [String]!
+}
+
+type AuthData {
+    token: String!
+    authorId: ID!
 }
 
 type Query {
@@ -17,11 +23,13 @@ type Query {
     getIdeaById(id: ID!): Idea
     getAuthors: [Author]
     getAuthorById(id: ID!): Author
+    login(email: String!, password: String!): AuthData
 }
 
 type Mutation {
     createIdea(title: String!, description: String, authorId: ID!): Idea
-    createAuthor(name: String!, email: String!): Author
+    createAuthor(name: String!, email: String!, password: String!): Author
     updateIdea(id: ID!, title: String, description: String, authorId: ID): Idea
     deleteIdeaById(id: ID!): String
+    login(email: String!, password: String!): AuthData
 }

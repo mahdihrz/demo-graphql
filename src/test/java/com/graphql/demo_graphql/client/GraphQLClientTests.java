@@ -29,7 +29,12 @@ public class GraphQLClientTests {
 
     @Test
     public void testGetIdeas() {
-        List<Idea> ideas = graphQLClient.getIdeas();
+
+        graphQLClient.createUser("userName", "mail@mail.com", "password");
+
+        String token = graphQLClient.login("mail@mail.com", "password");
+
+        List<Idea> ideas = graphQLClient.getIdeas(token);
         assertThat(ideas).isNotNull();
         assertThat(ideas.size()).isEqualTo(1);
         assertThat(ideas.getFirst().getTitle()).isEqualTo("title data");

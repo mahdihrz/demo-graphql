@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@WithMockUser(roles="USER")
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class IdeaResolverTests {
@@ -22,7 +24,7 @@ public class IdeaResolverTests {
 
     @BeforeEach
     public void injectIdeas() {
-        authorForTests = ideaResolver.createAuthor("firstAuthor", "mail-origin@mail.test");
+        authorForTests = ideaResolver.createAuthor("firstAuthor", "mail-origin@mail.test", "password");
         ideaResolver.createIdea("Test Idea", "Test Description", authorForTests.getId());
         ideaResolver.createIdea("Test Idea 2", "Test Description 2", authorForTests.getId());
     }
@@ -89,7 +91,7 @@ public class IdeaResolverTests {
 
     @Test
     public void testcreateAuthor() {
-        Author createdAuthor = ideaResolver.createAuthor("created_one", "test_create@mail.me");
+        Author createdAuthor = ideaResolver.createAuthor("created_one", "test_create@mail.me", "password");
         assertThat(createdAuthor).isNotNull();
         assertThat(ideaResolver.getAuthors().getLast().getId()).isEqualTo(createdAuthor.getId());
     }

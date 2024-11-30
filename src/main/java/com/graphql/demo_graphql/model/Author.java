@@ -17,6 +17,8 @@ public class Author {
     private Long id;
     private String name;
     private String email;
+    private String password;
+    private List<String> roles;
 
     @OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
     private List<Idea> ideas;

@@ -34,7 +34,9 @@ We will use Spring Security and we will use Token based authentication. So a log
 ## 5. Write the Slack message I would send to the frontend developer explaining how to use the API
 
 Hello,
-I have finished the implementation of Ideas backend API, and it is already available in dev environment. Please find below the API endpoint and Graphql Schema :
+I have finished the implementation of Ideas backend API, and it is already available in dev environment.
+Please note that the API is secured and does need to login using JWT. below you can find how to login.
+Please find below the API endpoint and Graphql Schema :
 - Endpoint : http://localhost:8080/graphql
 - GraphQL Schema :
 ```
@@ -50,6 +52,12 @@ type Author {
     name: String!
     email: String!
     ideas: [Idea]
+    roles: [String]!
+}
+
+type AuthData {
+    token: String!
+    authorId: ID!
 }
 
 type Query {
@@ -57,13 +65,15 @@ type Query {
     getIdeaById(id: ID!): Idea
     getAuthors: [Author]
     getAuthorById(id: ID!): Author
+    login(email: String!, password: String!): AuthData
 }
 
 type Mutation {
     createIdea(title: String!, description: String, authorId: ID!): Idea
-    createAuthor(name: String!, email: String!): Author
+    createAuthor(name: String!, email: String!, password: String!): Author
     updateIdea(id: ID!, title: String, description: String, authorId: ID): Idea
     deleteIdeaById(id: ID!): String
+    login(email: String!, password: String!): AuthData
 }
 ```
 
@@ -73,23 +83,47 @@ type Mutation {
 curl --location 'localhost:8080/graphql' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "query": "mutation {createAuthor (name: \"testName\", email:\"test@mail.me\"){ id name email } }"
+    "query": "mutation {createAuthor (name: \"testName\", email:\"test@mail.me\", password: \"password\"){ id name email } }"
 }'
 ```
-
-### Example of API request to get All Authors (with id, name, email) :
+### Example of API request to login :
 ```
 curl --location 'localhost:8080/graphql' \
 --header 'Content-Type: application/json' \
+--data-raw '{
+    "query": "mutation {login (email: \"test@mail.me\", password: \"password\") {token} }"
+}'
+```
+That will return something like : 
+
+```
+{
+    "data": {
+        "login": {
+            "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QG1haWwubWUiLCJyb2xlcyI6IlJPTEVfVVNFUiIsImlhdCI6MTczMjk5NjE1NywiZXhwIjoxNzMzMDMyMTU3fQ.JBKxvP2OvNlyvUfsnuuMi-ywEnOoVjPf0oIIK0OkEgA"
+        }
+    }
+}
+```
+Then the token could be used to request the different APIs. It is the classic Bearer Token authentication. It does need only a header like the following "Authorization: <token>". 
+
+### Example of API request to get All Authors (with id, name, email) :
+following the token is an example, it should be replaced by the one returned from login API.
+```
+curl --location 'localhost:8080/graphql' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QG1haWwubWUiLCJyb2xlcyI6IlJPTEVfVVNFUiIsImlhdCI6MTczMjk5NjE1NywiZXhwIjoxNzMzMDMyMTU3fQ.JBKxvP2OvNlyvUfsnuuMi-ywEnOoVjPf0oIIK0OkEgA' \
 --data '{
     "query": "query {getAuthors {id name email}}"
 }'
 ```
 
 ### Example of API request to create a new Idea :
+following the token is an example, it should be replaced by the one returned from login API.
 ```
 curl --location 'localhost:8080/graphql' \
 --header 'Content-Type: application/json' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QG1haWwubWUiLCJyb2xlcyI6IlJPTEVfVVNFUiIsImlhdCI6MTczMjk5NjE1NywiZXhwIjoxNzMzMDMyMTU3fQ.JBKxvP2OvNlyvUfsnuuMi-ywEnOoVjPf0oIIK0OkEgA' \
 --data '{
     "query": "mutation {createIdea (title: \"mahdi\", description:\"awesome idea\", authorId:1) { id description author {name}} }"
 }'
